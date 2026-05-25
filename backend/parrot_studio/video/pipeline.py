@@ -45,8 +45,8 @@ class VideoJobPipeline:
             await self._progress("transcribe", progress, f"Transcribing audio chunk {index + 1} of {len(chunks)}")
             transcript_segments.extend(
                 await providers.transcribe_chunk(
-                    chunk,
-                    offset_seconds=index * DEFAULT_CHUNK_SECONDS,
+                    chunk.path,
+                    offset_seconds=chunk.start,
                     language=command.source_language,
                 )
             )

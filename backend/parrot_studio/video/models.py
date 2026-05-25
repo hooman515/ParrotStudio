@@ -14,6 +14,13 @@ class TranscriptSegment:
         return asdict(self)
 
 
+@dataclass(frozen=True)
+class AudioChunk:
+    path: Path
+    start: float
+    duration: float
+
+
 @dataclass
 class SubtitleCue:
     index: int

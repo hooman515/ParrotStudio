@@ -23,6 +23,18 @@ class SRTTests(unittest.TestCase):
         self.assertIn("00:00:01,000 --> 00:00:03,000", cues_to_srt(cues))
         self.assertIn("Hello there.", cues_to_srt(cues))
 
+    def test_overlap_trims_previous_cue_without_delaying_next_start(self) -> None:
+        cues = segments_to_cues(
+            [
+                TranscriptSegment(1.0, 3.0, "سلام"),
+                TranscriptSegment(2.2, 4.0, "خوبی"),
+            ],
+            ["Hello.", "How are you?"],
+        )
+
+        self.assertLess(cues[0].end, cues[1].start)
+        self.assertEqual(cues[1].start, 2.2)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -6,6 +6,7 @@ import subprocess
 from pathlib import Path
 
 from parrot_studio.shared.errors import ProviderUnavailableError
+from parrot_studio.video.models import AudioChunk
 
 
 def require_ffmpeg() -> None:
@@ -34,10 +35,10 @@ def probe_duration(input_path: Path) -> float:
     return float(data["format"]["duration"])
 
 
-def extract_audio_chunks(input_path: Path, output_dir: Path, chunk_seconds: int) -> list[Path]:
+def extract_audio_chunks(input_path: Path, output_dir: Path, chunk_seconds: int) -> list[AudioChunk]:
     require_ffmpeg()
     output_dir.mkdir(parents=True, exist_ok=True)
-    pattern = output_dir / "chunk_%04d.m4a"
+    pattern = output_dir / "chunk_%04d.wav"
     subprocess.run(
         [
             "ffmpeg",
@@ -50,13 +51,13 @@ def extract_audio_chunks(input_path: Path, output_dir: Path, chunk_seconds: int)
             "-ar",
             "16000",
             "-c:a",
-            "aac",
-            "-b:a",
-            "64k",
+            "pcm_s16le",
             "-f",
             "segment",
             "-segment_time",
             str(chunk_seconds),
+            "-segment_format",
+            "wav",
             "-reset_timestamps",
             "1",
             str(pattern),
@@ -65,7 +66,13 @@ def extract_audio_chunks(input_path: Path, output_dir: Path, chunk_seconds: int)
         capture_output=True,
         text=True,
     )
-    return sorted(output_dir.glob("chunk_*.m4a"))
+    chunks: list[AudioChunk] = []
+    offset = 0.0
+    for path in sorted(output_dir.glob("chunk_*.wav")):
+        duration = probe_duration(path)
+        chunks.append(AudioChunk(path=path, start=offset, duration=duration))
+        offset += duration
+    return chunks
 
 
 def mux_selectable_subtitles(input_path: Path, subtitle_path: Path, output_path: Path) -> None:

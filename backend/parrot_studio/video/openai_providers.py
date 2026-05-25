@@ -6,6 +6,14 @@ from parrot_studio.shared.errors import MissingAPIKeyError, NetworkFailureError
 from parrot_studio.video.models import TranscriptSegment
 
 
+def _audio_mime_type(audio_path: Path) -> str:
+    if audio_path.suffix.lower() == ".wav":
+        return "audio/wav"
+    if audio_path.suffix.lower() in {".m4a", ".mp4"}:
+        return "audio/mp4"
+    return "application/octet-stream"
+
+
 class OpenAIVideoProviders:
     def __init__(self, *, api_key: str, transcription_model: str, translation_model: str) -> None:
         self.api_key = api_key
@@ -32,7 +40,7 @@ class OpenAIVideoProviders:
                         "https://api.openai.com/v1/audio/transcriptions",
                         headers={"Authorization": f"Bearer {self.api_key}"},
                         data=data,
-                        files={"file": (audio_path.name, audio, "audio/mp4")},
+                        files={"file": (audio_path.name, audio, _audio_mime_type(audio_path))},
                     )
             response.raise_for_status()
             data = response.json()

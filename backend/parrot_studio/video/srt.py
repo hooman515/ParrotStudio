@@ -5,6 +5,10 @@ import textwrap
 from parrot_studio.video.models import SubtitleCue, TranscriptSegment
 
 
+MIN_CUE_SECONDS = 0.35
+OVERLAP_GAP_SECONDS = 0.05
+
+
 def seconds_to_srt_time(value: float) -> str:
     milliseconds = max(0, int(round(value * 1000)))
     hours, remainder = divmod(milliseconds, 3_600_000)
@@ -42,15 +46,17 @@ def wrap_subtitle_text(text: str, width: int = 42, max_lines: int = 2) -> str:
 
 def segments_to_cues(segments: list[TranscriptSegment], translated_texts: list[str]) -> list[SubtitleCue]:
     cues: list[SubtitleCue] = []
-    previous_end = 0.0
-    for index, (segment, text) in enumerate(zip(segments, translated_texts), start=1):
+    for segment, text in zip(segments, translated_texts):
         wrapped = wrap_subtitle_text(text)
         if not wrapped:
             continue
-        start = max(previous_end, segment.start)
-        end = max(start + 1.2, segment.end)
-        if cues and start < cues[-1].end:
-            start = cues[-1].end
+        start = max(0.0, segment.start)
+        end = max(start + MIN_CUE_SECONDS, segment.end)
         cues.append(SubtitleCue(index=len(cues) + 1, start=start, end=end, text=wrapped))
-        previous_end = end
+
+    for previous, current in zip(cues, cues[1:]):
+        if previous.end > current.start:
+            trimmed_end = current.start - OVERLAP_GAP_SECONDS
+            previous.end = max(previous.start + 0.05, trimmed_end)
+
     return cues
