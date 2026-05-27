@@ -15,6 +15,7 @@ class ProtocolTests(unittest.TestCase):
                     "command": "start_video_job",
                     "input_path": "/tmp/input.mkv",
                     "output_path": "/tmp/output.mp4",
+                    "subtitle_offset_seconds": -0.4,
                     "openai_api_key": "sk-test",
                 }
             )
@@ -22,6 +23,7 @@ class ProtocolTests(unittest.TestCase):
         self.assertIsInstance(command, StartVideoJobCommand)
         self.assertEqual(command.input_path, "/tmp/input.mkv")
         self.assertEqual(command.output_path, "/tmp/output.mp4")
+        self.assertEqual(command.subtitle_offset_seconds, -0.4)
 
     def test_parse_cancel_job(self) -> None:
         self.assertIsInstance(parse_command('{"command":"cancel_job"}'), CancelJobCommand)

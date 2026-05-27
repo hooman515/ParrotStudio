@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP_PACKAGE="$ROOT/frontend/macos/ParrotStudioApp"
+APP_ICON="$APP_PACKAGE/Resources/AppIcon.icns"
 DIST="${PARROT_DIST:-/Applications}"
 APP="$DIST/Parrot Studio.app"
 CONTENTS="$APP/Contents"
@@ -26,6 +27,9 @@ mkdir -p "$MACOS" "$RESOURCES"
 cp "$BUILT" "$EXECUTABLE"
 chmod +x "$EXECUTABLE"
 cp -R "$ROOT/backend" "$RESOURCES/backend"
+if [[ -f "$APP_ICON" ]]; then
+  cp "$APP_ICON" "$RESOURCES/AppIcon.icns"
+fi
 
 if [[ "${PARROT_SKIP_VENDOR_DEPS:-0}" != "1" ]]; then
   DEPS_PYTHON="${PARROT_DEPS_PYTHON:-$(command -v python3)}"
@@ -44,6 +48,7 @@ cat > "$CONTENTS/Info.plist" <<'PLIST'
 <dict>
   <key>CFBundleDevelopmentRegion</key><string>en</string>
   <key>CFBundleExecutable</key><string>ParrotStudio</string>
+  <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundleIdentifier</key><string>com.parrot.studio</string>
   <key>CFBundleName</key><string>Parrot Studio</string>
   <key>CFBundlePackageType</key><string>APPL</string>

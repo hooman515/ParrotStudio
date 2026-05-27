@@ -74,6 +74,15 @@ struct ContentView: View {
         Form {
             TextField("Transcription model", text: $settings.transcriptionModel)
             TextField("Translation model", text: $settings.translationModel)
+            Stepper(value: $settings.subtitleOffsetSeconds, in: -10...10, step: 0.1) {
+                HStack {
+                    Text("Subtitle offset")
+                    Spacer()
+                    Text(settings.subtitleOffsetSeconds, format: .number.precision(.fractionLength(1)).sign(strategy: .always()))
+                        .monospacedDigit()
+                    Text("s")
+                }
+            }
             Toggle("Debug mode", isOn: $settings.debugMode)
             HStack {
                 Button {
@@ -183,6 +192,7 @@ struct ContentView: View {
             outputPath: outputURL.path,
             transcriptionModel: settings.transcriptionModel,
             translationModel: settings.translationModel,
+            subtitleOffsetSeconds: settings.subtitleOffsetSeconds,
             workDir: nil,
             debug: settings.debugMode,
             openaiAPIKey: apiKey

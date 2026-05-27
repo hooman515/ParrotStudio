@@ -22,6 +22,9 @@ let package = Package(
                 "Settings",
                 "Support"
             ],
+            resources: [
+                .copy("Resources")
+            ],
             linkerSettings: [
                 .linkedFramework("AppKit"),
                 .linkedFramework("Security"),

@@ -30,6 +30,7 @@ struct StartVideoJobRequest: Codable {
     var translationModel: String
     var sourceLanguage = "fa"
     var targetLanguage = "en"
+    var subtitleOffsetSeconds: Double
     var workDir: String?
     var debug: Bool
     var openaiAPIKey: String
@@ -42,6 +43,7 @@ struct StartVideoJobRequest: Codable {
         case translationModel = "translation_model"
         case sourceLanguage = "source_language"
         case targetLanguage = "target_language"
+        case subtitleOffsetSeconds = "subtitle_offset_seconds"
         case workDir = "work_dir"
         case debug
         case openaiAPIKey = "openai_api_key"

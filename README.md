@@ -12,7 +12,9 @@ sidecar.
 3. Parrot Studio extracts audio chunks with `ffmpeg`.
 4. The Python backend transcribes Persian audio with timestamps.
 5. It translates segments into English subtitles.
-6. It writes `.srt`, JSON artifacts, and an MP4 with embedded selectable subtitles.
+6. It splits long translations into readable timed subtitle cues.
+7. It applies the configured subtitle timing offset.
+8. It writes `.srt`, JSON artifacts, and an MP4 with embedded selectable subtitles.
 
 ## Requirements
 

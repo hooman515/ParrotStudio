@@ -23,6 +23,7 @@ class StartVideoJobCommand:
     translation_model: str = DEFAULT_TRANSLATION_MODEL
     source_language: str = "fa"
     target_language: str = "en"
+    subtitle_offset_seconds: float = 0.0
     work_dir: str | None = None
     debug: bool = False
     openai_api_key: str = ""

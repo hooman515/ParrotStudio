@@ -69,7 +69,7 @@ class VideoJobPipeline:
             )
 
         await self._progress("subtitles", 0.86, "Generating subtitle track")
-        cues = segments_to_cues(transcript_segments, translated)
+        cues = segments_to_cues(transcript_segments, translated, offset_seconds=command.subtitle_offset_seconds)
         artifacts.subtitles_json.write_text(json.dumps([asdict(cue) for cue in cues], indent=2), encoding="utf-8")
         artifacts.subtitle_srt.write_text(cues_to_srt(cues), encoding="utf-8")
 
